@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<h:head></h:head>
+	<h:body>
+	<h:form>
+	<div>
+		<div >
+    		<p:outputLabel for="option" value="country names:"/>
+    		<p:selectOneMenu id="option"  value="#{selectOneButtonView.country}">
+    			<f:selectItem itemLabel="select one" itemValue="" />
+    			 <f:selectItems value="#{selectOneButtonView.countries}" /> 
+    		</p:selectOneMenu>
+    	</div>
+    	<BR />
+    	<div>
+    	<p:outputLabel for="opt" value="basic:"/>
+    	<p:selectOneRadio id="opt" value="#{selectOneButtonView.country}" >
+    		<f:selectItem itemLabel="option1" itemValue="op1"/>
+    		<f:selectItem itemLabel="option2" itemValue="op2"/>
+    		<f:selectItem itemLabel="option3" itemValue="op3"/>
+    		<f:selectItem itemLabel="option4" itemValue="op4"/>	
+    	</p:selectOneRadio>
+    	</div>
+    	<BR />
+    	<div>
+    	<p:outputLabel for="opt1" value="basic:"/>
+    	<p:selectOneRadio id="opt1" value="#{selectOneButtonView.country}" layout="responsive" columns="2">
+    		 <f:selectItems value="#{selectOneButtonView.countries}" var="c" itemLabel="#{c}" itemValue="#{c}" /> 
+    	</p:selectOneRadio>
+    	</div>
+    	</div>
+    	</h:form>
+</h:body>
+	
+</html>

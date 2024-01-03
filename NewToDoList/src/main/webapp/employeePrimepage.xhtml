@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Primefaces</title>
+</h:head>
+
+<h:body>
+	<h2>Employee primefaces</h2>
+	<h:form id="form">
+		<p:panelGrid columns="2" id="addresspanel">
+			<p:outputLabel for="name">EmployeeName</p:outputLabel>
+			<p:inputText id="name" value="#{emp.employeeModel.name}" />
+			<p:outputLabel for="desig">EmployeeDesignation</p:outputLabel>
+			<p:inputText id="desig" value="#{emp.employeeModel.designation}" />
+			<p:outputLabel for="state">EmployeeAddress</p:outputLabel>
+			<p:selectOneMenu id="state" value="#{emp.employeeModel.state}"
+				style="width:250px;">
+				<p:ajax listener="#{emp.onStateChange}" update="district"/>
+				<f:selectItem itemLabel="Select state" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItems value="#{emp.states}"/>				
+			</p:selectOneMenu>
+			<p:outputLabel for="district">District</p:outputLabel>
+			<p:selectOneMenu id="district" value="#{emp.employeeModel.district}" style="width:250px;">
+				<f:selectItem itemLabel="Select district" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItems value="#{emp.districts}"/>	
+			</p:selectOneMenu>
+			
+			<p:outputLabel for="datepicker">EmployeeJoiningDate</p:outputLabel>
+			<p:calendar id="datepicker" value="#{emp.employeeModel.selectedDate}"
+				showOn="button" pattern="MM/dd/yyyy" />
+
+		</p:panelGrid>
+		<br />
+		<p:commandButton value="add" action="#{emp.add}"
+			update="form employeeData picklistForm" />
+	</h:form>
+	<br />
+	<h:form id="employeeData">
+		<p:dataTable border="2" value="#{emp.lazyDataModel}" var="e"
+			cellpadding="12" paginator="true" rows="5"
+			paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink}
+                             {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+			rowsPerPageTemplate="5,10,15" lazy="true">
+
+			<p:column headerText="ID" sortBy="#{e.id}" filterBy="#{e.id}">
+				<h:outputText value="#{e.id}" />
+			</p:column>
+
+			<p:column headerText="NAME" sortBy="#{e.name}" filterBy="#{e.name}">
+				<h:inputText value="#{e.name}"
+					rendered="#{emp.editable and e.id eq emp.selectEmployeeId}" />
+				<h:outputText value="#{e.name}"
+					rendered="#{not emp.editable or e.id ne emp.selectEmployeeId}" />
+			</p:column>
+
+			<p:column headerText="DESIGNATION" sortBy="#{e.designation}"
+				filterBy="#{e.designation}" style="width:120px;">
+				<h:inputText value="#{e.designation}"
+					rendered="#{emp.editable and e.id eq emp.selectEmployeeId}" />
+				<h:outputText value="#{e.designation}"
+					rendered="#{not emp.editable or e.id ne emp.selectEmployeeId}" />
+			</p:column>
+
+			<p:column headerText="STATE" sortBy="#{e.state}"
+				filterBy="#{e.state}" style="width:130px;">
+				<p:outputLabel for="add" value="#{e.state}"
+					rendered="#{not emp.editable or e.id ne emp.selectEmployeeId}" />
+				<p:selectOneMenu id="add" value="#{e.state}" style="width:120px;"
+					rendered="#{emp.editable and e.id eq emp.selectEmployeeId}">
+					<p:ajax listener="#{emp.onStateChange}" update="dis"/>
+					<f:selectItem itemLabel="Select state" itemValues=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{emp.states}" />
+				</p:selectOneMenu>
+			</p:column>
+			
+			<p:column headerText="DISTRICT" sortBy="#{e.district}"
+				filterBy="#{e.district}" style="width:130px;">
+				<p:outputLabel for="dis" value="#{e.district}"
+					rendered="#{not emp.editable or e.id ne emp.selectEmployeeId}"/>
+				<p:selectOneMenu id="dis" value="#{e.district}" style="width:120px;"
+					rendered="#{emp.editable and e.id eq emp.selectEmployeeId}">
+					<f:selectItem itemLabel="Select district" itemValues=""
+						noSelectionOption="true" />
+					<f:selectItems value="#{emp.data[e.state]}" />
+				</p:selectOneMenu>
+			</p:column>
+			
+
+			<p:column headerText="JoiningDate" sortBy="#{e.selectedDate}" style="width:120px;">
+				
+				<p:calendar value="#{e.selectedDate}" pattern="MM/dd/yyyy"
+					rendered="#{emp.editable and e.id eq emp.selectEmployeeId}" />
+				<h:outputText value="#{e.selectedDate}"
+					rendered="#{not emp.editable or e.id ne emp.selectEmployeeId}">
+					<f:convertDateTime pattern="MM/dd/yyyy" timeZone="UTC"/>
+				</h:outputText>
+			</p:column>
+
+
+			<p:column headerText="ACTION">
+				<p:commandButton value="delete" action="#{emp.deleteEmployee(e.id)}"
+					update="employeeData picklistForm" />
+			</p:column>
+
+			<p:column headerText="ACTION">
+				<p:commandButton value="edit" action="#{emp.edit}"
+					update="employeeData ">
+					<f:setPropertyActionListener target="#{emp.employeeModel}"
+						value="#{e}" />
+					<f:setPropertyActionListener target="#{emp.selectEmployeeId}"
+						value="#{e.id}" />
+				</p:commandButton>
+			</p:column>
+
+			<p:column headerText="ACTION">
+				<p:commandButton value="update" action="#{emp.updateEmployee}"
+					update="employeeData">
+					<f:setPropertyActionListener target="#{emp.updatedEmployee}"
+						value="#{e}" />
+				</p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+		
+	</h:form>
+	<br />
+
+	<h:form id="picklistForm">
+		<div>
+			<h2 >Employee PickList</h2>
+			<p:pickList id="picklist" value="#{emp.dualListModel}" var="employee"
+				itemLabel="#{employee}" itemValue="#{employee}" showCheckbox="true" />
+			<p:commandButton value="Delete Selected"
+				action="#{emp.deleteSelectedItemsFromPickList}"
+				update="employeeData picklistForm:picklist"  />
+		</div>
+	</h:form>
+
+
+
+
+</h:body>
+
+
+</html>
